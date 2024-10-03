@@ -42,6 +42,7 @@ impl EchoNode {
 struct Echo {
     echo: String,
 }
+
 #[derive(Debug, Serialize)]
 #[serde(tag = "type")]
 #[serde(rename = "echo_ok")]
