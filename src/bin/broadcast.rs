@@ -1,10 +1,6 @@
 use std::{collections::HashMap, io::stdin};
 
-use loom::{
-    request::Request,
-    response::{self, Response},
-    Node,
-};
+use loom::{request::Request, response::Response, Node};
 use serde::{Deserialize, Serialize};
 use serde_json::{de, json};
 
@@ -44,33 +40,16 @@ impl BroadcastNode {
         match request.body.payload {
             Req::Broadcast { message } => {
                 self.messages.push(message);
-                Response {
-                    src: request.dest,
-                    dest: request.src,
-                    body: response::Body {
-                        in_reply_to: request.body.id,
-                        payload: Res::BroadcastOk,
-                    },
-                }
+                request.into()
             }
-            Req::Read => Response {
-                src: request.dest,
-                dest: request.src,
-                body: response::Body {
-                    in_reply_to: request.body.id,
-                    payload: Res::ReadOk {
-                        messages: self.messages.clone(),
-                    },
-                },
-            },
-            Req::Topology { .. } => Response {
-                src: request.dest,
-                dest: request.src,
-                body: response::Body {
-                    in_reply_to: request.body.id,
-                    payload: Res::TopologyOk,
-                },
-            },
+            Req::Read => {
+                let mut response: Response<Res> = request.into();
+                response.body.payload = Res::ReadOk {
+                    messages: self.messages.clone(),
+                };
+                response
+            }
+            Req::Topology { .. } => request.into(),
         }
     }
 }
@@ -97,4 +76,15 @@ enum Res {
     BroadcastOk,
     ReadOk { messages: Vec<usize> },
     TopologyOk,
+}
+impl From<Req> for Res {
+    fn from(value: Req) -> Self {
+        match value {
+            Req::Broadcast { .. } => Self::BroadcastOk,
+            Req::Read => Self::ReadOk {
+                messages: Vec::new(),
+            },
+            Req::Topology { .. } => Self::TopologyOk,
+        }
+    }
 }
