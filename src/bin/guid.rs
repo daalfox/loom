@@ -1,10 +1,6 @@
 use std::io::stdin;
 
-use loom::{
-    request::Request,
-    response::{self, Response},
-    Node,
-};
+use loom::{request::Request, response::Response, Node};
 use serde::{Deserialize, Serialize};
 use serde_json::{de, json};
 
@@ -36,16 +32,10 @@ impl Node for GuidNode {
 
 impl GuidNode {
     fn handle(&self, request: Request<Generate>) -> Response<GenerateOk> {
-        Response {
-            src: request.dest,
-            dest: request.src,
-            body: response::Body {
-                in_reply_to: request.body.id,
-                payload: GenerateOk {
-                    guid: format!("{}-{}", self.node_id, request.body.id),
-                },
-            },
-        }
+        let mut response: Response<GenerateOk> = request.into();
+        response.body.payload.guid =
+            Some(format!("{}-{}", self.node_id, response.body.in_reply_to));
+        response
     }
 }
 
@@ -59,5 +49,11 @@ struct Generate {}
 #[serde(rename = "generate_ok")]
 struct GenerateOk {
     #[serde(rename = "id")]
-    guid: String,
+    guid: Option<String>,
+}
+
+impl From<Generate> for GenerateOk {
+    fn from(_value: Generate) -> Self {
+        Self { guid: None }
+    }
 }
