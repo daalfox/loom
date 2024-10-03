@@ -4,8 +4,8 @@ use request::{Init, Request};
 use response::{InitOk, Response};
 use serde_json::{de, json};
 
-mod request;
-mod response;
+pub mod request;
+pub mod response;
 
 pub trait Node {
     fn from_init(node_id: String, neighbors: Vec<String>) -> Self;
