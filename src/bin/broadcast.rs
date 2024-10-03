@@ -21,15 +21,15 @@ fn main() -> anyhow::Result<()> {
 #[allow(dead_code)]
 struct BroadcastNode {
     node_id: String,
-    neighbors: Vec<String>,
+    node_ids: Vec<String>,
     messages: Vec<usize>,
 }
 
 impl Node for BroadcastNode {
-    fn from_init(node_id: String, neighbors: Vec<String>) -> Self {
+    fn from_init(node_id: String, node_ids: Vec<String>) -> Self {
         BroadcastNode {
             node_id,
-            neighbors,
+            node_ids,
             messages: Vec::new(),
         }
     }

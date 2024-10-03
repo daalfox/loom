@@ -21,12 +21,12 @@ fn main() -> anyhow::Result<()> {
 #[allow(dead_code)]
 struct EchoNode {
     node_id: String,
-    neighbors: Vec<String>,
+    node_ids: Vec<String>,
 }
 
 impl Node for EchoNode {
-    fn from_init(node_id: String, neighbors: Vec<String>) -> Self {
-        EchoNode { node_id, neighbors }
+    fn from_init(node_id: String, node_ids: Vec<String>) -> Self {
+        EchoNode { node_id, node_ids }
     }
 }
 
