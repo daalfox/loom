@@ -25,6 +25,7 @@ fn main() -> anyhow::Result<()> {
 struct BroadcastNode {
     node_id: NodeId,
     node_ids: Vec<NodeId>,
+    topology: HashMap<NodeId, Vec<NodeId>>,
     messages: HashSet<usize>,
 }
 
@@ -33,6 +34,7 @@ impl Node for BroadcastNode {
         BroadcastNode {
             node_id,
             node_ids,
+            topology: HashMap::new(),
             messages: HashSet::new(),
         }
     }
@@ -52,7 +54,10 @@ impl BroadcastNode {
                 };
                 response
             }
-            Req::Topology { .. } => request.into(),
+            Req::Topology { ref topology } => {
+                self.topology = topology.clone();
+                request.into()
+            }
         }
     }
 }
