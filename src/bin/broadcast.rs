@@ -1,4 +1,7 @@
-use std::{collections::HashMap, io::stdin};
+use std::{
+    collections::{HashMap, HashSet},
+    io::stdin,
+};
 
 use loom::{request::Request, response::Response, Node, NodeId};
 use serde::{Deserialize, Serialize};
@@ -22,7 +25,7 @@ fn main() -> anyhow::Result<()> {
 struct BroadcastNode {
     node_id: NodeId,
     node_ids: Vec<NodeId>,
-    messages: Vec<usize>,
+    messages: HashSet<usize>,
 }
 
 impl Node for BroadcastNode {
@@ -30,7 +33,7 @@ impl Node for BroadcastNode {
         BroadcastNode {
             node_id,
             node_ids,
-            messages: Vec::new(),
+            messages: HashSet::new(),
         }
     }
 }
@@ -39,7 +42,7 @@ impl BroadcastNode {
     fn handle(&mut self, request: Request<Req>) -> Response<Res> {
         match request.body.payload {
             Req::Broadcast { message } => {
-                self.messages.push(message);
+                self.messages.insert(message);
                 request.into()
             }
             Req::Read => {
@@ -74,7 +77,7 @@ enum Req {
 #[allow(clippy::enum_variant_names)]
 enum Res {
     BroadcastOk,
-    ReadOk { messages: Vec<usize> },
+    ReadOk { messages: HashSet<usize> },
     TopologyOk,
 }
 impl From<Req> for Res {
@@ -82,7 +85,7 @@ impl From<Req> for Res {
         match value {
             Req::Broadcast { .. } => Self::BroadcastOk,
             Req::Read => Self::ReadOk {
-                messages: Vec::new(),
+                messages: HashSet::new(),
             },
             Req::Topology { .. } => Self::TopologyOk,
         }
