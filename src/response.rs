@@ -27,7 +27,7 @@ pub struct Body<P> {
 impl<T, P: From<T>> From<request::Body<T>> for Body<P> {
     fn from(value: request::Body<T>) -> Self {
         Self {
-            in_reply_to: value.id,
+            in_reply_to: value.id.expect("this message has no id to reply"),
             payload: value.payload.into(),
         }
     }
