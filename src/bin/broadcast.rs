@@ -1,6 +1,6 @@
 use std::{collections::HashMap, io::stdin};
 
-use loom::{request::Request, response::Response, Node};
+use loom::{request::Request, response::Response, Node, NodeId};
 use serde::{Deserialize, Serialize};
 use serde_json::{de, json};
 
@@ -20,13 +20,13 @@ fn main() -> anyhow::Result<()> {
 
 #[allow(dead_code)]
 struct BroadcastNode {
-    node_id: String,
-    node_ids: Vec<String>,
+    node_id: NodeId,
+    node_ids: Vec<NodeId>,
     messages: Vec<usize>,
 }
 
 impl Node for BroadcastNode {
-    fn from_init(node_id: String, node_ids: Vec<String>) -> Self {
+    fn from_init(node_id: NodeId, node_ids: Vec<NodeId>) -> Self {
         BroadcastNode {
             node_id,
             node_ids,
@@ -64,7 +64,7 @@ enum Req {
     },
     Read,
     Topology {
-        topology: HashMap<String, Vec<String>>,
+        topology: HashMap<NodeId, Vec<NodeId>>,
     },
 }
 

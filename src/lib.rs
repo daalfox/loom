@@ -7,8 +7,10 @@ use serde_json::{de, json};
 pub mod request;
 pub mod response;
 
+pub type NodeId = String;
+
 pub trait Node {
-    fn from_init(node_id: String, node_ids: Vec<String>) -> Self;
+    fn from_init(node_id: NodeId, node_ids: Vec<NodeId>) -> Self;
     fn init() -> Self
     where
         Self: Sized,

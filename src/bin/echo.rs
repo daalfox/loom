@@ -1,6 +1,6 @@
 use std::io::stdin;
 
-use loom::{request::Request, response::Response, Node};
+use loom::{request::Request, response::Response, Node, NodeId};
 use serde::{Deserialize, Serialize};
 use serde_json::{de, json};
 
@@ -20,12 +20,12 @@ fn main() -> anyhow::Result<()> {
 
 #[allow(dead_code)]
 struct EchoNode {
-    node_id: String,
-    node_ids: Vec<String>,
+    node_id: NodeId,
+    node_ids: Vec<NodeId>,
 }
 
 impl Node for EchoNode {
-    fn from_init(node_id: String, node_ids: Vec<String>) -> Self {
+    fn from_init(node_id: NodeId, node_ids: Vec<NodeId>) -> Self {
         EchoNode { node_id, node_ids }
     }
 }
